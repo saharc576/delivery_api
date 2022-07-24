@@ -4,10 +4,13 @@ from requests.structures import CaseInsensitiveDict
 import urllib.parse
 from database import Database
 from fastapi import FastAPI, Request
-import boot     # the import itself will set the secret api keys in env
+try:
+    import boot    # the import itself will set the secret api keys in env
+except Exception:
+    print("you must set env variables for code to work, add a boot file")
+    exit()
 
 app = FastAPI()
-exit()
 
 
 class Api:
