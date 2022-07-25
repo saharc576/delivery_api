@@ -55,7 +55,6 @@ def get_valid_time_slots(path_to_static_json="timeslots.json"):
         valid_timeslot = True
         for holiday in holidays["holidays"]:
             holiday_date = datetime.datetime.strptime(holiday["date"], "%Y-%m-%d")
-            print(f"comparing {holiday_date} ?==? {timeslot_date} --> {holiday_date.date() == timeslot_date.date()}")
             if holiday_date.date() == timeslot_date.date():
                 valid_timeslot = False
                 break
@@ -65,5 +64,5 @@ def get_valid_time_slots(path_to_static_json="timeslots.json"):
             timeslot["id"] = timeslot_id
             valid.append(timeslot)
         else:
-            print(f"removed timeslot {timeslot}")
+            print(f"removed timeslot due to holiday collision {timeslot}")
     return valid

@@ -1,13 +1,14 @@
 import json
 import sqlite3
 import datetime
-import os
 from handlers import get_geolocation
+import itertools
 
 
 class Database:
     def __init__(self):
-        self.counter = 0
+        self.iter = itertools.count()
+        self.counter = next(self.iter)
         self.con = sqlite3.connect('deliveries_data.db', check_same_thread=False)
         self.cur = self.con.cursor()
         self.cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -30,23 +31,24 @@ class Database:
         self.cur.execute("SELECT taken from timeslots WHERE timeslot_id = ?", (timeslot_id,))
         taken = self.cur.fetchone()
         if taken[0] < 2:
-            self.counter += 1
             row = [self.counter, username, timeslot_id, complete]
             self.cur.execute("insert into deliveries values (?, ?, ?, ?)", row)
             self.cur.execute("UPDATE timeslots SET taken = ? WHERE timeslot_id = ?", (taken[0] + 1, timeslot_id))
             self.print_table("after insert")
-            return self.counter
+            return True
         print(f"timeslot {timeslot_id} is taken by two deliveries already")
         return False
 
+    def get_and_increase_counter(self):
+        self.counter = next(self.iter)
+        return self.counter
+
     def init_time_slots(self, timeslots):
-        if not os.getenv("INIT_TIMESLOTS"):
-            for timeslot in timeslots:
-                start = datetime.datetime.strptime(timeslot["start"], "%d/%m/%y %H:%M").timestamp()
-                end = datetime.datetime.strptime(timeslot["end"], "%d/%m/%y %H:%M").timestamp()
-                row = [start, end, timeslot["id"], json.dumps(get_geolocation(timeslot["address"])), 0]
-                self.cur.execute("insert into timeslots values (?, ?, ?, ?, ?)", row)
-            os.environ["INIT_TIMESLOTS"] = "TRUE"
+        for timeslot in timeslots:
+            start = datetime.datetime.strptime(timeslot["start"], "%d/%m/%y %H:%M").timestamp()
+            end = datetime.datetime.strptime(timeslot["end"], "%d/%m/%y %H:%M").timestamp()
+            row = [start, end, timeslot["id"], json.dumps(get_geolocation(timeslot["address"])), 0]
+            self.cur.execute("insert into timeslots values (?, ?, ?, ?, ?)", row)
 
     def get_all_timeslots(self):
         self.cur.execute("SELECT * from timeslots WHERE taken < 2")
@@ -75,12 +77,12 @@ class Database:
             taken = self.cur.fetchone()
             self.cur.execute("UPDATE timeslots SET taken = ? WHERE id = ?", (taken[0] - 1, freed_timeslot_id))
 
-
-
     def print_table(self, msg=""):
         print(msg)
         self.cur.execute("select * from deliveries ")
-        print(self.cur.fetchall())
+        print("deliveries\n", self.cur.fetchall())
+        self.cur.execute("select * from timeslots ")
+        print("timeslots\n", self.cur.fetchall())
 
 
 db = Database()
