@@ -1,0 +1,34 @@
+{
+  "timeslots" :[
+    {
+      "start": "25/07/22 17:00",
+      "end": "25/07/22 18:00",
+      "address": "Dizengoff, 63117 Tel Aviv-Yafo, Israel"
+    },
+    {
+      "start": "27/07/22 10:00",
+      "end": "27/07/22 12:00",
+      "address": "Be'er Sheva, Masada, 8445316 Beer Sheva, Israel"
+    },
+    {
+      "start": "06/12/21 10:00",
+      "end": "06/12/21 12:00",
+      "address": "Fuel Accumulation/Derech Joe Yosef Alon, 2357, 84630 Beer Sheva, Israel"
+    },
+    {
+      "start": "28/07/22 12:00",
+      "end": "28/07/22 15:00",
+      "address": "Skhunat Hillel, Ramat Gan, Tel Aviv, Israel"
+    },
+    {
+      "start": "29/07/22 13:00",
+      "end": "29/07/22 14:00",
+      "address": "Derech Moran, 3057703 Binyamina - Givat Ada, Israel"
+    },
+    {
+      "start": "25/07/22 08:00",
+      "end": "25/07/22 11:00",
+      "address": "Neve Avivim, 69395 Tel Aviv-Yafo, Israel"
+    }
+  ]
+}
