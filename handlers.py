@@ -6,6 +6,7 @@ from requests.structures import CaseInsensitiveDict
 import urllib.parse
 import json
 
+
 def get_geolocation(text):
     t = urllib.parse.quote(text)
     url = f"https://api.geoapify.com/v1/geocode/search?text={t}&apiKey={os.getenv('GEO_KEY')}"
@@ -13,9 +14,23 @@ def get_geolocation(text):
     headers = CaseInsensitiveDict()
     headers["Accept"] = "application/json"
 
-    resp = requests.get(url, headers=headers)
+    resp = requests.get(url, headers=headers).text
+    lat = json.loads(resp)["features"][0]["properties"]["lat"]
+    lon = json.loads(resp)["features"][0]["properties"]["lon"]
+    return f"{lat}|{lon}"
 
-    return resp.text
+
+def reverse_geolocation(lat, lon):
+    lat = float(lat.replace('"', ""))
+    lon = float(lon.replace('"', ""))
+    url = f"https://api.geoapify.com/v1/geocode/reverse?lat={float(lat)}&lon={lon}&format=json&apiKey={os.getenv('GEO_KEY')}"
+
+    headers = CaseInsensitiveDict()
+    headers["Accept"] = "application/json"
+
+    resp = requests.get(url, headers=headers).text
+    address = json.loads(resp)["results"][0]["formatted"]
+    return address
 
 
 def get_holidays():
